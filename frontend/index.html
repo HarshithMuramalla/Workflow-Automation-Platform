@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genesis AI Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center mb-8">Genesis AI Assistant</h1>
+        
+        <!-- Email Section -->
+        <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Send Email</h2>
+            <form id="emailForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">To:</label>
+                    <input type="email" id="emailTo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Subject:</label>
+                    <input type="text" id="emailSubject" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Message:</label>
+                    <textarea id="emailMessage" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+                </div>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Send Email</button>
+            </form>
+        </div>
+
+        <!-- Calendar Section -->
+        <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Schedule Meeting</h2>
+            <form id="calendarForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Summary:</label>
+                    <input type="text" id="meetingSummary" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Start Time:</label>
+                    <input type="datetime-local" id="meetingStart" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">End Time:</label>
+                    <input type="datetime-local" id="meetingEnd" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Description:</label>
+                    <textarea id="meetingDescription" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+                </div>
+                <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">Schedule Meeting</button>
+            </form>
+        </div>
+
+        <!-- YouTube Section -->
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-semibold mb-4">Search YouTube</h2>
+            <form id="youtubeForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Search Query:</label>
+                    <input type="text" id="youtubeQuery" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+                <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">Search</button>
+            </form>
+            <div id="youtubeResults" class="mt-4 space-y-4"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = window.location.origin;
+
+        // Email Form Handler
+        document.getElementById('emailForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const response = await fetch(`${API_BASE_URL}/send-email`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        to: document.getElementById('emailTo').value,
+                        subject: document.getElementById('emailSubject').value,
+                        message: document.getElementById('emailMessage').value
+                    })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Error sending email');
+                }
+                
+                alert('Email sent successfully!');
+                e.target.reset();
+            } catch (error) {
+                alert('Error sending email: ' + error.message);
+            }
+        });
+
+        // Calendar Form Handler
+        document.getElementById('calendarForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const response = await fetch(`${API_BASE_URL}/schedule-meeting`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        summary: document.getElementById('meetingSummary').value,
+                        description: document.getElementById('meetingDescription').value,
+                        start_time: document.getElementById('meetingStart').value,
+                        end_time: document.getElementById('meetingEnd').value
+                    })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Error scheduling meeting');
+                }
+                
+                alert('Meeting scheduled successfully!');
+                e.target.reset();
+            } catch (error) {
+                alert('Error scheduling meeting: ' + error.message);
+            }
+        });
+
+        // YouTube Form Handler
+        document.getElementById('youtubeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const response = await fetch(`${API_BASE_URL}/search-youtube`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: document.getElementById('youtubeQuery').value
+                    })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Error searching YouTube');
+                }
+                
+                const data = await response.json();
+                const resultsDiv = document.getElementById('youtubeResults');
+                resultsDiv.innerHTML = '';
+                
+                data.results.forEach(item => {
+                    const videoDiv = document.createElement('div');
+                    videoDiv.className = 'p-4 border rounded-lg';
+                    videoDiv.innerHTML = `
+                        <h3 class="font-semibold">${item.snippet.title}</h3>
+                        <p class="text-sm text-gray-600">${item.snippet.description}</p>
+                        <a href="https://www.youtube.com/watch?v=${item.id.videoId}" 
+                           target="_blank" 
+                           class="text-blue-500 hover:underline">Watch Video</a>
+                    `;
+                    resultsDiv.appendChild(videoDiv);
+                });
+            } catch (error) {
+                alert('Error searching YouTube: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>
