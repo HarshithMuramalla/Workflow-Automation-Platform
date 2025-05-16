@@ -1,4 +1,4 @@
-# workflow_automation-platform
+# Workflow_Automation_Platform
 
 The original version of the Genesis AI Agent that integrates with Google services (Gmail, Calendar, YouTube) using the Genesis model for content enhancement.
 
